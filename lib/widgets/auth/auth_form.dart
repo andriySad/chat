@@ -3,6 +3,15 @@ import 'package:flutter/material.dart';
 enum AuthMode { Signup, Login }
 
 class AuthForm extends StatefulWidget {
+  AuthForm(this.submitFn, this.isLoading);
+  final bool isLoading;
+  final void Function(
+    String email,
+    String password,
+    String username,
+    bool isLogin,
+    BuildContext ctx,
+  ) submitFn;
   @override
   State<AuthForm> createState() => _AuthFormState();
 }
@@ -20,9 +29,13 @@ class _AuthFormState extends State<AuthForm> {
 
     if (isValid) {
       _formKey.currentState!.save();
-      print(_userEmail);
-      print(_userName);
-      print(_userPassword);
+      widget.submitFn(
+        _userEmail.trim(),
+        _userPassword.trim(),
+        _userName.trim(),
+        _isLogin,
+        context,
+      );
     }
   }
 
@@ -88,23 +101,26 @@ class _AuthFormState extends State<AuthForm> {
                   },
                 ),
                 const SizedBox(height: 12),
-                ElevatedButton(
-                  child: Text(_isLogin ? 'Login' : 'Signup'),
-                  style: TextButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20))),
-                  onPressed: _trySubmit,
-                ),
-                TextButton(
-                  child: Text(_isLogin
-                      ? 'Create new account'
-                      : 'I already have an account'),
-                  onPressed: () {
-                    setState(() {
-                      _isLogin = !_isLogin;
-                    });
-                  },
-                )
+                if (widget.isLoading) const CircularProgressIndicator(),
+                if (!widget.isLoading)
+                  ElevatedButton(
+                    child: Text(_isLogin ? 'Login' : 'Signup'),
+                    style: TextButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20))),
+                    onPressed: _trySubmit,
+                  ),
+                if (!widget.isLoading)
+                  TextButton(
+                    child: Text(_isLogin
+                        ? 'Create new account'
+                        : 'I already have an account'),
+                    onPressed: () {
+                      setState(() {
+                        _isLogin = !_isLogin;
+                      });
+                    },
+                  )
               ],
             ),
           ),
