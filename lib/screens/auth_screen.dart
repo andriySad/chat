@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:chat/widgets/auth/auth_form.dart';
 
 class AuthScreen extends StatefulWidget {
+  static const routeName = '/auth';
   @override
   State<AuthScreen> createState() => _AuthScreenState();
 }
